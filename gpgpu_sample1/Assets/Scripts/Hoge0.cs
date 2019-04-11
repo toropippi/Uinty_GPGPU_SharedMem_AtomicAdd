@@ -21,7 +21,7 @@ public class Hoge0 : MonoBehaviour
 
         // host to device
         A.SetData(host_A);
-        B.SetData(host_A);
+        B.SetData(host_B);
 
         //引数をセット
         shader.SetBuffer(k, "A", A);
