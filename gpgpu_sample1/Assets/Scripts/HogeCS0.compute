@@ -1,0 +1,11 @@
+﻿#pragma kernel CSMain
+//Read and Write
+RWStructuredBuffer<float> A;
+RWStructuredBuffer<float> B;
+RWStructuredBuffer<float> C;
+
+[numthreads(4, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+	C[id.x] = A[id.x] + B[id.x];
+}
