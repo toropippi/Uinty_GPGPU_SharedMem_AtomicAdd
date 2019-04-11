@@ -1,0 +1,15 @@
+﻿#pragma kernel CSMain
+//Read and Write
+RWStructuredBuffer<float> vec1;
+RWStructuredBuffer<float> vec2;
+RWStructuredBuffer<float> ans;
+
+[numthreads(32, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+	float s = 0.0;
+	for (int i = 0; i < 32768; i++) {//65536*2048/32/128=32768
+		s += vec1[id.x + i * 4096] * vec2[id.x + i * 4096];
+	}
+	ans[id.x] = s;
+}
