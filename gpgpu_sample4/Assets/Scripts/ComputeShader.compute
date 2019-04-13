@@ -1,0 +1,10 @@
+﻿#pragma kernel sharedmem_samp1
+RWStructuredBuffer<uint> A;//256要素
+RWStructuredBuffer<uint> atmicBUF;//1要素
+uint N;
+
+[numthreads(256, 1, 1)]
+void sharedmem_samp1(uint id : SV_DispatchThreadID, uint grid : SV_GroupID, uint gi : SV_GroupIndex) {
+	uint a = A[id];
+	InterlockedAdd(atmicBUF[0], a);
+}
