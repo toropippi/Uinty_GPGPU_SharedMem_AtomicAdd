@@ -4,12 +4,12 @@ RWStructuredBuffer<float> B;//1要素
 
 groupshared float block[256];
 [numthreads(256, 1, 1)]
-void sharedmem_samp0(int id : SV_DispatchThreadID, int grid : SV_GroupID, int gi : SV_GroupIndex) {
+void sharedmem_samp0(uint id : SV_DispatchThreadID, uint grid : SV_GroupID, uint gi : SV_GroupIndex) {
 	float a = A[id];
 	block[gi] = a;
 	//共有メモリに書き込まれた
 	GroupMemoryBarrierWithGroupSync();
-	for (int i = 128; i > 0; i /= 2) {
+	for (uint i = 128; i > 0; i /= 2) {
 		if (gi < i) {//128,64,32,16,8,4,2,1
 			block[gi] += block[gi + i];
 		}
