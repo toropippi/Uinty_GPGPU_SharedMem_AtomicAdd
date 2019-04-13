@@ -26,7 +26,7 @@ public class Host : MonoBehaviour
         //引数をセット
         shader.SetBuffer(k, "A", A);
         shader.SetBuffer(k, "atmicBUF", AtomicBUF);
-        shader.SetInt("N", (int)N);
+        //shader.SetInt("N", (int)N);
         // GPUで計算
         int time0 = Gettime();
         shader.Dispatch(k, (int)N/256, 1, 1);//ここでは1*1*1並列を指定。ComputeShader側で256並列を指定している
