@@ -8,39 +8,36 @@ public class Host : MonoBehaviour
     public ComputeShader shader;
     void Start()
     {
-        uint N = 65536*256;
-        uint[] host_A = new uint[N];
-        for (uint i = 0; i < N; i++)
-        {
-            host_A[i] = i;
-        }
+        uint N = 65536*1024;//64M
         uint[] host_B = { 0 };//この数字はなんでもいい。
-
-        ComputeBuffer A = new ComputeBuffer(host_A.Length, sizeof(uint));
         ComputeBuffer AtomicBUF = new ComputeBuffer(host_B.Length, sizeof(uint));
         int k = shader.FindKernel("sharedmem_samp1");
 
-        // host to device
-        A.SetData(host_A);
+        //時間測定開始
+        int time = Gettime();
 
         //引数をセット
-        shader.SetBuffer(k, "A", A);
         shader.SetBuffer(k, "atmicBUF", AtomicBUF);
-        //shader.SetInt("N", (int)N);
-        // GPUで計算
-        int time0 = Gettime();
-        shader.Dispatch(k, (int)N/256, 1, 1);//ここでは1*1*1並列を指定。ComputeShader側で256並列を指定している
+
+        //初回カーネル起動
+        Debug.Log("初回カーネル起動前" + (Gettime() - time));
+        shader.Dispatch(k, 256, 1, 1);
+        Debug.Log("初回カーネルDispatch後  " + (Gettime() - time));
+        AtomicBUF.GetData(host_B);
+        Debug.Log("初回カーネルGetData直後  " + (Gettime() - time));
+
+        // こっちが本命。GPUで計算
+        shader.Dispatch(k, (int)N/256, 1, 1);//ここではN並列にしたいのでN/256グループ＊256スレッド
+        Debug.Log("本命カーネルDispatch直後 " + (Gettime() - time));
 
         // device to host
         AtomicBUF.GetData(host_B);
-        int time1 = Gettime() - time0;
 
         //結果
-        Debug.Log("addの結果   "+host_B[0]);
-        Debug.Log("演算時間(ms) "+time1);
+        Debug.Log("本命カーネル確定終了    " + (Gettime() - time));
+        Debug.Log("\nAtomic_Addの結果   "+host_B[0]);
 
         //解放
-        A.Release();
         AtomicBUF.Release();
     }
 
