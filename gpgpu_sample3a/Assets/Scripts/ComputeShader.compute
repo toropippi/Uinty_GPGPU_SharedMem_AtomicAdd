@@ -7,135 +7,64 @@
 #pragma kernel sharedmem_samp64
 #pragma kernel sharedmem_samp128
 #pragma kernel sharedmem_samp256
-RWStructuredBuffer<uint> A;//256要素
+RWStructuredBuffer<uint> A;
 #define LPNM 2048
 
-[numthreads(256, 1, 1)]
-void sharedmem_samp256(uint id : SV_DispatchThreadID) {
-	uint x=id;
+
+uint SinRandom(uint id) {
+	uint x = id;
 	float y;
 
 	for (int i = 0; i < LPNM; i++) {
 		y = sin(1.234f*(float)(x % 12345));
-		y = 1.0 / y;
-		x = (uint)(100000000.0f*y)+id;
+		y = 2.3456f / (y+1.0001f);
+		x = (uint)(100000000.0f*y) + id;
 	}
+	return x;
+}
 
-	A[id] = x;
+
+[numthreads(256, 1, 1)]
+void sharedmem_samp256(uint id : SV_DispatchThreadID) {
+	A[id] = SinRandom(id);
 }
 
 [numthreads(128, 1, 1)]
 void sharedmem_samp128(uint id : SV_DispatchThreadID) {
-	uint x = id;
-	float y;
-
-	for (int i = 0; i < LPNM; i++) {
-		y = sin(1.234f*(float)(x % 12345));
-		y = 1.0 / y;
-		x = (uint)(100000000.0f*y) + id;
-	}
-
-	A[id] = x;
+	A[id] = SinRandom(id);
 }
 
 [numthreads(64, 1, 1)]
 void sharedmem_samp64(uint id : SV_DispatchThreadID) {
-	uint x = id;
-	float y;
-
-	for (int i = 0; i < LPNM; i++) {
-		y = sin(1.234f*(float)(x % 12345));
-		y = 1.0 / y;
-		x = (uint)(100000000.0f*y) + id;
-	}
-
-	A[id] = x;
+	A[id] = SinRandom(id);
 }
-
 
 [numthreads(32, 1, 1)]
 void sharedmem_samp32(uint id : SV_DispatchThreadID) {
-	uint x = id;
-	float y;
-
-	for (int i = 0; i < LPNM; i++) {
-		y = sin(1.234f*(float)(x % 12345));
-		y = 1.0 / y;
-		x = (uint)(100000000.0f*y) + id;
-	}
-
-	A[id] = x;
+	A[id] = SinRandom(id);
 }
-
 
 [numthreads(16, 1, 1)]
 void sharedmem_samp16(uint id : SV_DispatchThreadID) {
-	uint x = id;
-	float y;
-
-	for (int i = 0; i < LPNM; i++) {
-		y = sin(1.234f*(float)(x % 12345));
-		y = 1.0 / y;
-		x = (uint)(100000000.0f*y) + id;
-	}
-
-	A[id] = x;
+	A[id] = SinRandom(id);
 }
 
 [numthreads(8, 1, 1)]
 void sharedmem_samp8(uint id : SV_DispatchThreadID) {
-	uint x = id;
-	float y;
-
-	for (int i = 0; i < LPNM; i++) {
-		y = sin(1.234f*(float)(x % 12345));
-		y = 1.0 / y;
-		x = (uint)(100000000.0f*y) + id;
-	}
-
-	A[id] = x;
+	A[id] = SinRandom(id);
 }
 
 [numthreads(4, 1, 1)]
 void sharedmem_samp4(uint id : SV_DispatchThreadID) {
-	uint x = id;
-	float y;
-
-	for (int i = 0; i < LPNM; i++) {
-		y = sin(1.234f*(float)(x % 12345));
-		y = 1.0 / y;
-		x = (uint)(100000000.0f*y) + id;
-	}
-
-	A[id] = x;
+	A[id] = SinRandom(id);
 }
-
 
 [numthreads(2, 1, 1)]
 void sharedmem_samp2(uint id : SV_DispatchThreadID) {
-	uint x = id;
-	float y;
-
-	for (int i = 0; i < LPNM; i++) {
-		y = sin(1.234f*(float)(x % 12345));
-		y = 1.0 / y;
-		x = (uint)(100000000.0f*y) + id;
-	}
-
-	A[id] = x;
+	A[id] = SinRandom(id);
 }
-
 
 [numthreads(1, 1, 1)]
 void sharedmem_samp1(uint id : SV_DispatchThreadID) {
-	uint x = id;
-	float y;
-
-	for (int i = 0; i < LPNM; i++) {
-		y = sin(1.234f*(float)(x % 12345));
-		y = 1.0 / y;
-		x = (uint)(100000000.0f*y) + id;
-	}
-
-	A[id] = x;
+	A[id] = SinRandom(id);
 }

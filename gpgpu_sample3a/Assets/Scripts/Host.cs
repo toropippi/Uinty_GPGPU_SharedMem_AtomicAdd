@@ -15,13 +15,13 @@ public class Host : MonoBehaviour
     int N;
     int[] timelist;
     int knum;
-    int WORKITEM;
+    int THREADNUM;
     void Start()
     {
         N = 11;
-        WORKITEM = 256 * 1024;
+        THREADNUM = 256 * 1024;
         timelist = new int[N];
-        host_A = new uint[WORKITEM];
+        host_A = new uint[THREADNUM];
         A = new ComputeBuffer(host_A.Length, sizeof(uint));
         k = new int[9];
         k[0] = shader.FindKernel("sharedmem_samp1");
@@ -34,15 +34,10 @@ public class Host : MonoBehaviour
         k[7] = shader.FindKernel("sharedmem_samp128");
         k[8] = shader.FindKernel("sharedmem_samp256");
         //引数をセット
-        ///////////////////初回カーネル起動
         for (int i = 0; i < 9; i++)
         {
             shader.SetBuffer(k[i], "A", A);
-            //shader.Dispatch(k[i], WORKITEM >> i, 1, 1);
         }
-        //A.GetData(host_A);
-        ///////////////////初回カーネル起動ここまで
-        ///
         cnt = 0;
         knum = 0;
     }
@@ -77,7 +72,7 @@ public class Host : MonoBehaviour
     {
         time0 = Gettime();
         // GPUで計算
-        shader.Dispatch(k[knum], WORKITEM >> (knum), 1, 1);
+        shader.Dispatch(k[knum], THREADNUM >> knum, 1, 1);
         // device to host
         A.GetData(host_A);
         time1 = Gettime() - time0;
