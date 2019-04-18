@@ -18,8 +18,8 @@ public class Host : MonoBehaviour
     int WORKITEM;
     void Start()
     {
-        N = 5;
-        WORKITEM = 256 * 32;
+        N = 11;
+        WORKITEM = 256 * 1024;
         timelist = new int[N];
         host_A = new uint[WORKITEM];
         A = new ComputeBuffer(host_A.Length, sizeof(uint));
@@ -34,20 +34,20 @@ public class Host : MonoBehaviour
         k[7] = shader.FindKernel("sharedmem_samp128");
         k[8] = shader.FindKernel("sharedmem_samp256");
         //引数をセット
-        for(int i = 0; i < 9; i++)
+        ///////////////////初回カーネル起動
+        for (int i = 0; i < 9; i++)
         {
             shader.SetBuffer(k[i], "A", A);
-            ///////////////////初回カーネル起動
-            shader.Dispatch(k[i], WORKITEM >> i, 1, 1);
+            //shader.Dispatch(k[i], WORKITEM >> i, 1, 1);
         }
-        A.GetData(host_A);
-        
+        //A.GetData(host_A);
         ///////////////////初回カーネル起動ここまで
+        ///
         cnt = 0;
         knum = 0;
     }
+    
 
-    // Update is called once per frame
     void Update()
     {
         if (cnt < N) {
@@ -55,10 +55,9 @@ public class Host : MonoBehaviour
         }
         
         if (cnt == N) {
-            for (int i = 0; i < N; i++) {
-                Debug.Log(timelist[i]);
-            }
-
+            Array.Sort(timelist);//中央値を選択したい
+            Debug.Log("グループスレッド数="+(1<<knum)+"\n計算時間        "+timelist[N/2]+"ms");
+            
             knum++;
             if (knum == 9)
             {
