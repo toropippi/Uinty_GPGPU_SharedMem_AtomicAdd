@@ -17,7 +17,7 @@ uint SinRandom(uint id) {
 
 	for (int i = 0; i < LPNM; i++) {
 		y = sin(1.234f*(float)(x % 12345));
-		y = 2.3456f / (y+1.0001f);
+		y = 2.3456f / (y+1.3001f);
 		x = (uint)(100000000.0f*y) + id;
 	}
 	return x;
