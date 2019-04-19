@@ -1,0 +1,109 @@
+﻿#pragma kernel sharedmem_samp1
+#pragma kernel sharedmem_samp2
+#pragma kernel sharedmem_samp4
+#pragma kernel sharedmem_samp8
+#pragma kernel sharedmem_samp16
+#pragma kernel sharedmem_samp32
+#pragma kernel sharedmem_samp64
+#pragma kernel sharedmem_samp128
+#pragma kernel sharedmem_samp256
+
+RWStructuredBuffer<uint> A;
+groupshared float block[1024 * 8];//32KB
+
+#define LPNM 2048
+
+
+uint SinRandom(uint id) {
+	uint x = id;
+	float y;
+
+	for (int i = 0; i < LPNM; i++) {
+		y = sin(1.234f*(float)(x % 12345));
+		y = 2.3456f / (y + 1.0001f);
+		x = (uint)(100000000.0f*y) + id;
+	}
+	return x;
+}
+
+
+
+[numthreads(256, 1, 1)]
+void sharedmem_samp256(uint id : SV_DispatchThreadID) {
+	block[id%8192] = 1.0f*id;
+	//GroupMemoryBarrierWithGroupSync();
+	uint tmp = SinRandom(id);
+	A[id] = SinRandom(id)+ (uint)block[(id+ tmp%976891) % 8192];
+}
+
+
+[numthreads(128, 1, 1)]
+void sharedmem_samp128(uint id : SV_DispatchThreadID) {
+	block[id % 8192] = 1.0f*id;
+	//GroupMemoryBarrierWithGroupSync();
+	uint tmp = SinRandom(id);
+	A[id] = SinRandom(id) + (uint)block[(id + tmp % 976891) % 8192];
+}
+
+
+[numthreads(64, 1, 1)]
+void sharedmem_samp64(uint id : SV_DispatchThreadID) {
+	block[id % 8192] = 1.0f*id;
+	//GroupMemoryBarrierWithGroupSync();
+	uint tmp = SinRandom(id);
+	A[id] = SinRandom(id) + (uint)block[(id + tmp % 976891) % 8192];
+}
+
+
+[numthreads(32, 1, 1)]
+void sharedmem_samp32(uint id : SV_DispatchThreadID) {
+	block[id % 8192] = 1.0f*id;
+	//GroupMemoryBarrierWithGroupSync();
+	uint tmp = SinRandom(id);
+	A[id] = SinRandom(id) + (uint)block[(id + tmp % 976891) % 8192];
+}
+
+
+[numthreads(16, 1, 1)]
+void sharedmem_samp16(uint id : SV_DispatchThreadID) {
+	block[id % 8192] = 1.0f*id;
+	//GroupMemoryBarrierWithGroupSync();
+	uint tmp = SinRandom(id);
+	A[id] = SinRandom(id) + (uint)block[(id + tmp % 976891) % 8192];
+}
+
+
+[numthreads(8, 1, 1)]
+void sharedmem_samp8(uint id : SV_DispatchThreadID) {
+	block[id % 8192] = 1.0f*id;
+	//GroupMemoryBarrierWithGroupSync();
+	uint tmp = SinRandom(id);
+	A[id] = SinRandom(id) + (uint)block[(id + tmp % 976891) % 8192];
+}
+
+
+[numthreads(4, 1, 1)]
+void sharedmem_samp4(uint id : SV_DispatchThreadID) {
+	block[id % 8192] = 1.0f*id;
+	//GroupMemoryBarrierWithGroupSync();
+	uint tmp = SinRandom(id);
+	A[id] = SinRandom(id) + (uint)block[(id + tmp % 976891) % 8192];
+}
+
+
+[numthreads(2, 1, 1)]
+void sharedmem_samp2(uint id : SV_DispatchThreadID) {
+	block[id % 8192] = 1.0f*id;
+	//GroupMemoryBarrierWithGroupSync();
+	uint tmp = SinRandom(id);
+	A[id] = SinRandom(id) + (uint)block[(id + tmp % 976891) % 8192];
+}
+
+
+[numthreads(1, 1, 1)]
+void sharedmem_samp1(uint id : SV_DispatchThreadID) {
+	block[id % 8192] = 1.0f*id;
+	//GroupMemoryBarrierWithGroupSync();
+	uint tmp = SinRandom(id);
+	A[id] = SinRandom(id) + (uint)block[(id + tmp % 976891) % 8192];
+}
