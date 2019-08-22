@@ -8,10 +8,11 @@ public class Host : MonoBehaviour
     public ComputeShader shader;
     void Start()
     {
-        uint N = 65536*1024;//64M
-        uint[] host_B = { 0 };//この数字はなんでもいい。
+        uint N = 1024;//256の倍数で
+        uint[] host_B = { 0 };//初期値
         ComputeBuffer AtomicBUF = new ComputeBuffer(host_B.Length, sizeof(uint));
         int k = shader.FindKernel("sharedmem_samp1");
+        AtomicBUF.SetData(host_B);
 
         //時間測定開始
         int time = Gettime();
@@ -21,13 +22,15 @@ public class Host : MonoBehaviour
 
         //初回カーネル起動
         Debug.Log("初回カーネル起動前" + (Gettime() - time));
-        shader.Dispatch(k, 256, 1, 1);
+        shader.Dispatch(k, (int)N/256, 1, 1);
         Debug.Log("初回カーネルDispatch後  " + (Gettime() - time));
         AtomicBUF.GetData(host_B);
         Debug.Log("初回カーネルGetData直後  " + (Gettime() - time));
 
         // こっちが本命。GPUで計算
-        shader.Dispatch(k, (int)N/256, 1, 1);//ここではN並列にしたいのでN/256グループ＊256スレッド
+        host_B[0] = 0;
+        AtomicBUF.SetData(host_B);
+        shader.Dispatch(k, (int)N/256, 1, 1);
         Debug.Log("本命カーネルDispatch直後 " + (Gettime() - time));
 
         // device to host
